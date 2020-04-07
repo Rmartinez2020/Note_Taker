@@ -23,14 +23,25 @@ app.get("/notes", (req, res) => {
 // Return Database Json
 app.get("/api/notes", (req, res) => {
     fs.readFile("db/db.json", "utf-8", (err, data) => {
-        if(err) throw err;
+        if (err) throw err;
         return res.json(JSON.parse(data));
-    })
+    });
 });
-
-// Post new not to Database Json
+let id=3;
+// Post new note to Database Json
 app.post("/api/notes", (req, res) => {
-    
+    fs.readFile("db/db.json", "utf-8", (err, data) => {
+        if (err) throw err;
+        let notes = JSON.parse(data);
+        req.body.id= id++;
+        notes.push(req.body);
+        console.log(notes);
+        notes = JSON.stringify(notes, null, "\t");
+        fs.writeFile("db/db.json", notes, function (err, data) {
+            if (err) throw err;
+            // return res.json(data);
+        })
+    })
 });
 app.delete("/api/notes/:id", (req, res) => {
 
