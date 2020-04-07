@@ -17,20 +17,28 @@ app.use(express.static("public"));
 app.get("/notes", (req, res) => {
     res.sendFile(path.join(__dirname, "public/notes.html"));
 });
-// Return index.html file
-app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "public/index.html"));
-});
+
 //API routes
+
+// Return Database Json
 app.get("/api/notes", (req, res) => {
-
+    fs.readFile("db/db.json", "utf-8", (err, data) => {
+        if(err) throw err;
+        return res.json(JSON.parse(data));
+    })
 });
-app.post("/api/notes", (req, res) => {
 
+// Post new not to Database Json
+app.post("/api/notes", (req, res) => {
+    
 });
 app.delete("/api/notes/:id", (req, res) => {
 
 })
+// Return index.html file
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "public/index.html"));
+});
 
 app.listen(PORT, () => {
     console.log(`Listening on port: ${PORT}`);
