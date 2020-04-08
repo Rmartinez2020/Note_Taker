@@ -22,24 +22,29 @@ app.get("/notes", (req, res) => {
 
 // Return Database Json
 app.get("/api/notes", (req, res) => {
+    // Read the Json file
     fs.readFile("db/db.json", "utf-8", (err, data) => {
         if (err) throw err;
+        // return the file as a Json object
         return res.json(JSON.parse(data));
     });
 });
+//Make an id to give to new notes coming in
 let id=3;
 // Post new note to Database Json
 app.post("/api/notes", (req, res) => {
+    // Read the Json file then push the new data to the array then rewrite the file with the new data
     fs.readFile("db/db.json", "utf-8", (err, data) => {
         if (err) throw err;
+
         let notes = JSON.parse(data);
         req.body.id= id++;
         notes.push(req.body);
-        console.log(notes);
         notes = JSON.stringify(notes, null, "\t");
-        fs.writeFile("db/db.json", notes, function (err, data) {
+        fs.writeFile("db/db.json", notes, function (err) {
             if (err) throw err;
-            // return res.json(data);
+            //return the new data
+             return res.json(notes);
         })
     })
 });
