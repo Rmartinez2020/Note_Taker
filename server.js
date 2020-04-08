@@ -1,25 +1,27 @@
+// Dependencies
+// ===========================================================
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
 
 const app = express();
-
 const PORT = process.env.PORT || 3000;
 
 // Set up the Express app to handle data parsing
+// ===========================================================
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("public"));
 
-// HTML routes
-
+// HTML Routes
+// ===========================================================
 // Return notes.html file
 app.get("/notes", (req, res) => {
     res.sendFile(path.join(__dirname, "public/notes.html"));
 });
 
-//API routes
-
+//API Routes
+// ===========================================================
 // Return Database Json
 app.get("/api/notes", (req, res) => {
     // Read the Json file
@@ -49,13 +51,27 @@ app.post("/api/notes", (req, res) => {
     })
 });
 app.delete("/api/notes/:id", (req, res) => {
+    const targetId = req.params.id;
+    console.log(targetId);
+    fs.readFile("db/db.json", "utf-8", (err, data) => {
+        if (err) throw err;
+        let notes = JSON.parse(data);
+        let filteredNotes = notes.filter(function(value, index, arr){ return value.id != targetId;});
+        filteredNotes = JSON.stringify(filteredNotes, null, "\t");
+        fs.writeFile("db/db.json", filteredNotes, function (err) {
+            if (err) throw err;
+            //return the new data
+             return res.json(filteredNotes);
+        })
+        });
 
-})
+    });
 // Return index.html file
 app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "public/index.html"));
 });
-
+// Listener
+// ===========================================================
 app.listen(PORT, () => {
     console.log(`Listening on port: ${PORT}`);
 });
