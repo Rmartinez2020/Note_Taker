@@ -3,6 +3,11 @@
 const express = require("express");
 const path = require("path");
 const fs = require("fs");
+const { v4: uuidv4 } = require('uuid');
+
+
+
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -31,8 +36,6 @@ app.get("/api/notes", (req, res) => {
         return res.json(JSON.parse(data));
     });
 });
-//Make an id to give to new notes coming in
-let id=3;
 // Post new note to Database Json
 app.post("/api/notes", (req, res) => {
     // Read the Json file then push the new data to the array then rewrite the file with the new data
@@ -40,7 +43,8 @@ app.post("/api/notes", (req, res) => {
         if (err) throw err;
 
         let notes = JSON.parse(data);
-        req.body.id= id++;
+        //give unique id
+        req.body.id= uuidv4();
         notes.push(req.body);
         notes = JSON.stringify(notes, null, "\t");
         fs.writeFile("db/db.json", notes, function (err) {
