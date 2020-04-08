@@ -50,12 +50,14 @@ app.post("/api/notes", (req, res) => {
         })
     })
 });
+// Delete targeted note and update the page
 app.delete("/api/notes/:id", (req, res) => {
+    // Get the note ID
     const targetId = req.params.id;
-    console.log(targetId);
     fs.readFile("db/db.json", "utf-8", (err, data) => {
         if (err) throw err;
         let notes = JSON.parse(data);
+        //filter out notes with targeted ID
         let filteredNotes = notes.filter(function(value, index, arr){ return value.id != targetId;});
         filteredNotes = JSON.stringify(filteredNotes, null, "\t");
         fs.writeFile("db/db.json", filteredNotes, function (err) {
